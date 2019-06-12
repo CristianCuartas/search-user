@@ -1,0 +1,10 @@
+trythis() {
+    this.state.list.map(items => {
+      return (
+        <option key={items.id}>
+          Id: {items.id} - Nombre: {items.nombre}
+        </option>
+      );
+    });
+    console.log('Esta pasando esto?');
+  }

@@ -1,40 +1,71 @@
 import React, { Component } from 'react';
+import { Input, Button, Container, Col, Row } from 'reactstrap';
 
 class buscador extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: ''
+      q: '',
+      infoUser: [],
+      empty: true
     };
   }
 
-  changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+  // showDataUser = () => {
+  //   const infoUser = this.state;
+  //   {
+  //     infoUser.map(items => console.log(items.login));
+  //   }
+  // };
 
   submitHandler = e => {
     e.preventDefault();
-    fetch('https://jsonplaceholder.typicode.com/posts?id=')
+    fetch(`https://api.github.com/search/users?q=${this.state.q}`)
       .then(response => response.json())
-      .then(json => {
-        this.setState({ id: '' });
-      });
+      .then(user => {
+        this.setState({ infoUser: user.items[0] });
+        if (user.incomplete_results === false) {
+          this.setState({ empty: false });
+        } else {
+          return null;
+        }
+        console.log(user.items[0].login);
+      })
+      .catch(error => console.error(error));
   };
 
   render() {
-    const { id } = this.state;
+    console.log(this.state.infoUser);
+    console.log(this.state.empty);
     return (
-      <form onSubmit={this.submitHandler}>
-        <label>Id:</label>
-        <input
-          key={id}
-          type="text"
-          name="id"
-          value={id}
-          onChange={this.changeHandler}
-        />
-        <button type="submit">Search</button>
-      </form>
+      <div style={{ marginTop: '150px' }}>
+        <Container>
+          <form onSubmit={this.submitHandler}>
+            <Row>
+              <Col md="4">
+                <h3>Id:</h3>
+              </Col>
+              <Col md="4">
+                <Input
+                  placeholder="Escribe tu username de GitHub"
+                  type="text"
+                  name="items"
+                  onChange={e => {
+                    this.setState({ q: e.target.value });
+                  }}
+                />
+              </Col>
+              <Col md="4">
+                <Button outline color="success" type="submit">
+                  Search
+                </Button>
+              </Col>
+            </Row>
+          </form>
+          <br />
+          <br />
+        </Container>
+      </div>
     );
   }
 }
